@@ -1,0 +1,130 @@
+; TODO INSERT CONFIG CODE HERE USING CONFIG BITS GENERATOR
+
+    ; PIC16F877A Configuration Bit Settings
+
+; Assembly source line config statements
+
+#include "p16f877a.inc"
+
+; CONFIG
+; __config 0x3F39
+ __CONFIG _FOSC_XT & _WDTE_OFF & _PWRTE_OFF & _BOREN_OFF & _LVP_OFF & _CPD_OFF & _WRT_OFF & _CP_OFF
+ 
+ 
+RES_VECT  CODE    0x0000            ; processor reset vector
+    GOTO    START                   ; go to beginning of program
+
+; TODO ADD INTERRUPTS HERE IF USED
+
+MAIN_PROG CODE                      ; let linker place main program
+
+START
+ 
+ #DEFINE    CONTA   0X20
+ #DEFINE    CONTA1  0X21
+ #DEFINE    CONTA2  0X22
+ 
+    BSF   STATUS,RP0
+    BCF   STATUS,RP1
+
+    BCF    TRISC,0
+    BCF    TRISC,1
+    BCF    TRISC,2
+    BCF    TRISC,3
+    BCF    TRISC,4
+    BCF    TRISC,5
+   ;CLRF   TRISA
+   
+    BCF   STATUS,RP0
+    BCF   STATUS,RP1
+    
+    BCF   PORTC,2
+    BCF   PORTC,5
+
+    
+	BSF   PORTC,0
+	BSF   PORTC,1	
+	BSF   PORTC,3
+	BSF   PORTC,4	
+CALL	espera1500
+
+INICIO:
+	BSF   PORTC,0
+	BCF   PORTC,1	
+	BCF   PORTC,3
+	BSF   PORTC,4
+CALL	espera10
+CALL INTERMEDIO
+	
+FINAL:
+	BCF   PORTC,0
+	BSF   PORTC,1
+	BSF   PORTC,3
+	BCF   PORTC,4
+CALL	espera15
+CALL	INTERMEDIO
+CALL	INICIO
+
+INTERMEDIO:	
+	BSF   PORTC,0
+	BSF   PORTC,1	
+	BSF   PORTC,3
+	BSF   PORTC,4	
+CALL	espera1500
+	RETURN
+;---------------------------------------	
+espera10:
+    MOVLW   .5
+    MOVWF   CONTA    
+decConta10:
+	MOVLW   .200
+	MOVWF   CONTA1    
+decConta110:
+	MOVLW   .255
+	MOVWF   CONTA2    
+decConta210: 
+	DECFSZ  CONTA2
+GOTO	decConta210	
+	DECFSZ	CONTA1
+GOTO	decConta110	
+	DECFSZ	CONTA
+GOTO	decConta10
+	RETURN
+;---------------------------------------------	
+espera15:
+    MOVLW   .7
+    MOVWF   CONTA    
+decConta15:
+	MOVLW   .200
+	MOVWF   CONTA1    
+decConta115:
+	MOVLW   .255
+	MOVWF   CONTA2    
+decConta215: 
+	DECFSZ  CONTA2
+GOTO	decConta215	
+	DECFSZ	CONTA1
+GOTO	decConta115	
+	DECFSZ	CONTA
+GOTO	decConta15
+	RETURN
+;--------------------------------------------------
+espera1500:
+    MOVLW   .2
+    MOVWF   CONTA    
+decConta1500:
+	MOVLW   .200
+	MOVWF   CONTA1    
+decConta11500:
+	MOVLW   .255
+	MOVWF   CONTA2    
+decConta21500: 
+	DECFSZ  CONTA2
+GOTO	decConta21500	
+	DECFSZ	CONTA1
+GOTO	decConta11500	
+	DECFSZ	CONTA
+GOTO	decConta1500
+	RETURN
+	
+    END
