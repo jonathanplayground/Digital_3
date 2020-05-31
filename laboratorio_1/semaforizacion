@@ -20,50 +20,42 @@ MAIN_PROG CODE                      ; let linker place main program
 
 START
  
- #DEFINE    CONTA   0X20
- #DEFINE    CONTA1  0X21
+ #DEFINE    CONTA   0X20	;nombrar direccion de registro
+ #DEFINE    CONTA1  0X21	;conta1 será la direccion 20 hexadeciamal
  #DEFINE    CONTA2  0X22
  
-    BSF   STATUS,RP0
-    BCF   STATUS,RP1
+    BSF   STATUS,RP0	;cambiar de banco para asignar entradas/salidas
+    BCF   STATUS,RP1	;banco 1 seleccionado, con RP0 =1, RP1 = 0
 
-    BCF    TRISC,0
-    BCF    TRISC,1
+    BCF    TRISC,0	;tris C en el primer bit = 0 
+    BCF    TRISC,1	;para implementar el puerto C como salida
     BCF    TRISC,2
     BCF    TRISC,3
     BCF    TRISC,4
     BCF    TRISC,5
-   ;CLRF   TRISA
    
-    BCF   STATUS,RP0
-    BCF   STATUS,RP1
+    BCF   STATUS,RP0	;cambiar de banco para hacer uso de los puertos
+    BCF   STATUS,RP1	;banco 0 seleccionada, con RP0 =0, RP1 =0
     
-    BCF   PORTC,2
-    BCF   PORTC,5
-
-    
-	BSF   PORTC,0
-	BSF   PORTC,1	
-	BSF   PORTC,3
-	BSF   PORTC,4	
-CALL	espera1500
+    BCF   PORTC,2	;salida puerto C bit 2, apagado
+    BCF   PORTC,5	;salida puerto C bit 5, apagado
 
 INICIO:
-	BSF   PORTC,0
-	BCF   PORTC,1	
-	BCF   PORTC,3
-	BSF   PORTC,4
-CALL	espera10
-CALL INTERMEDIO
+	BSF   PORTC,0	;salida puerto C bit 0, encendido
+	BCF   PORTC,1	;salida puerto C bit 1, apagado
+	BCF   PORTC,3	;salida puerto C bit 0, encendido
+	BSF   PORTC,4	;salida puerto C bit 4, apagado
+CALL	espera10	;llamar a la función espera 10
+CALL INTERMEDIO		;llamar  a la funcion intermedio
 	
 FINAL:
-	BCF   PORTC,0
-	BSF   PORTC,1
-	BSF   PORTC,3
-	BCF   PORTC,4
-CALL	espera15
+	BCF   PORTC,0	;salida puerto C bit 0, encendido
+	BSF   PORTC,1	;salida puerto C bit 1, encendido
+	BSF   PORTC,3	;salida puerto C bit 3, encendido
+	BCF   PORTC,4	;salida puerto C bit 4, encendido
+CALL	espera15	
 CALL	INTERMEDIO
-CALL	INICIO
+CALL	INICIO	
 
 INTERMEDIO:	
 	BSF   PORTC,0
@@ -74,11 +66,11 @@ CALL	espera1500
 	RETURN
 ;---------------------------------------	
 espera10:
-    MOVLW   .5
-    MOVWF   CONTA    
+    MOVLW   .51		;asignar el valor decimal 51 en W
+    MOVWF   CONTA    	;guardar el valor 51 en el registro conta
 decConta10:
-	MOVLW   .200
-	MOVWF   CONTA1    
+	MOVLW   .200	;asignar el valor decimal 200 en W
+	MOVWF   CONTA1  ;guardar el valor 51 en el registro conta1  
 decConta110:
 	MOVLW   .255
 	MOVWF   CONTA2    
@@ -89,10 +81,11 @@ GOTO	decConta210
 GOTO	decConta110	
 	DECFSZ	CONTA
 GOTO	decConta10
-	RETURN
+	RETURN		;retornar a la instruccion despues de ser llamada
+			;la funcion actual
 ;---------------------------------------------	
 espera15:
-    MOVLW   .7
+    MOVLW   .77
     MOVWF   CONTA    
 decConta15:
 	MOVLW   .200
@@ -110,7 +103,7 @@ GOTO	decConta15
 	RETURN
 ;--------------------------------------------------
 espera1500:
-    MOVLW   .2
+    MOVLW   .8
     MOVWF   CONTA    
 decConta1500:
 	MOVLW   .200
